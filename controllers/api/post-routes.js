@@ -31,8 +31,8 @@ router.get('/', (req, res) => {
     .then(dbPostData => res.json(dbPostData))
     .catch(err => {
         console.log(err);
-        res.status(500).json(err)
-    })
+        res.status(500).json(err);
+    });
 });
 
 router.get('/:id', (req, res) => {
@@ -63,7 +63,7 @@ router.get('/:id', (req, res) => {
         ]
     })
     .then(dbPostData => {
-        if(!dbPostData) {
+        if (!dbPostData) {
             res.status(404).json({ message: 'No post found with this id' });
             return;
         }
@@ -79,7 +79,7 @@ router.post('/', (req, res) => {
     Post.create({
         title: req.body.title,
         post_url: req.body.post_url,
-        user_id: req.body.user_id
+        user_id: req.session.user_id
     })
     .then(dbPostData => res.json(dbPostData))
     .catch(err => {
@@ -88,14 +88,17 @@ router.post('/', (req, res) => {
     });
 });
 
+
 router.put('/upvote', (req, res) => {
-    Post.upvote(req.body, { Vote })
-    .then(updatedPostData => res.json(updatedPostData))
-    .catch(err => {
-        console.log(err);
-        res.status(400).json(err);
-    });
-})
+    if (req.session) {
+        Post.upvote({ ...req.body, user_id: req.session.user_id }, { Vote, Comment, User })
+            .then(updatedVoteData => res.json(updatedVoteData))
+            .catch(err => {
+                console.log(err);
+                res.status(500).json(err);
+            });
+    }
+});
 
 router.put('/:id', (req, res) => {
     Post.update(
@@ -109,7 +112,7 @@ router.put('/:id', (req, res) => {
         }
     )
     .then(dbPostData => {
-        if(!dbPostData) {
+        if (!dbPostData) {
             res.status(404).json({ message: 'No post found with this id' });
             return;
         }
@@ -128,7 +131,7 @@ router.delete('/:id', (req, res) => {
         }
     })
     .then(dbPostData => {
-        if(!dbPostData) {
+        if (!dbPostData) {
             res.status(404).json({ message: 'No post found with this id' });
             return;
         }
@@ -136,7 +139,7 @@ router.delete('/:id', (req, res) => {
     })
     .catch(err => {
         console.log(err);
-        res.status(500),json(err);
+        res.status(500).json(err);
     });
 });
 

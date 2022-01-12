@@ -127,7 +127,7 @@ router.put('/:id', (req, res) => {
         }
     })
         .then(dbUserData => {
-            if (!dbUserData[0]) {
+            if (!dbUserData) {
                 res.status(404).json({ message: 'No user found with this id' });
                 return;
             }
@@ -136,7 +136,7 @@ router.put('/:id', (req, res) => {
         .catch(err => {
             console.log(err);
             res.status(500).json(err);
-        })
+        });
 });
 
 // DELETE /api/users/1
@@ -147,7 +147,7 @@ router.delete('/:id', (req, res) => {
         }
     })
     .then(dbUserData => {
-        if(!dbUserData) {
+        if (!dbUserData) {
             res.status(404).json({ message: 'No user found with this id'});
             return;
         }
