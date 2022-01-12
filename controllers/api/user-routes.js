@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { User, Post, Vote, Comment } = require('../../models');
+const withAuth = require('../../utils/auth');
 
 //GET /api/users
 
@@ -44,7 +45,7 @@ router.get('/:id', (req, res) => {
         ]
     })
         .then(dbUserData => {
-            if(!dbUserData) {
+            if (!dbUserData) {
                 res.status(404).json({ message: 'No user found with this id' });
                 return;
             }
@@ -85,8 +86,8 @@ router.post('/login', (req, res) => {
             email: req.body.email
         }
     }).then(dbUserData => {
-        if(!dbUserData) {
-            res.status(400).json({ message: 'No user found with that email address!' });
+        if (!dbUserData) {
+            res.status(400).json({ message: 'No user with that email address!' });
             return;
         }
 
@@ -116,7 +117,7 @@ router.post('/logout', (req, res) => {
     } else {
         res.status(404).end();
     }
-})
+});
 
 //PUT /api/users/1
 router.put('/:id', (req, res) => {
@@ -148,7 +149,7 @@ router.delete('/:id', (req, res) => {
     })
     .then(dbUserData => {
         if (!dbUserData) {
-            res.status(404).json({ message: 'No user found with this id'});
+            res.status(404).json({ message: 'No user found with this id' });
             return;
         }
         res.json(dbUserData);
